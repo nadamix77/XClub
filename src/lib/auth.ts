@@ -1,13 +1,19 @@
 import NextAuth, { type NextAuthOptions } from "next-auth"
 import TwitterProvider from "next-auth/providers/twitter"
 
-export const authOptions: NextAuthOptions = {
-  providers: [
+const providers = []
+
+if (process.env.TWITTER_CLIENT_ID && process.env.TWITTER_CLIENT_SECRET) {
+  providers.push(
     TwitterProvider({
-      clientId: process.env.TWITTER_CLIENT_ID!,
-      clientSecret: process.env.TWITTER_CLIENT_SECRET!,
-    }),
-  ],
+      clientId: process.env.TWITTER_CLIENT_ID,
+      clientSecret: process.env.TWITTER_CLIENT_SECRET,
+    })
+  )
+}
+
+export const authOptions: NextAuthOptions = {
+  providers,
   callbacks: {
     async jwt({ token, account, profile }) {
       if (account && profile) {

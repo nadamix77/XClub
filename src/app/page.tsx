@@ -113,6 +113,27 @@ function Main() {
 }
 
 function LoginPrompt() {
+  const hasTwitterAuth = !!process.env.NEXT_PUBLIC_TWITTER_AUTH
+
+  if (!hasTwitterAuth) {
+    return (
+      <Card className="text-center">
+        <CardContent className="pt-8 pb-8">
+          <Twitter className="w-12 h-12 text-sky-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold mb-2">TweetGate</h2>
+          <p className="text-muted-foreground mb-4">
+            Twitter OAuth is not configured yet.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Add <code className="bg-muted px-1 rounded">TWITTER_CLIENT_ID</code> and{" "}
+            <code className="bg-muted px-1 rounded">TWITTER_CLIENT_SECRET</code>{" "}
+            to your <code className="bg-muted px-1 rounded">.env</code> file to enable login.
+          </p>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
     <Card className="text-center">
       <CardContent className="pt-8 pb-8">
