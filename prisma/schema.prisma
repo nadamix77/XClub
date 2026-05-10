@@ -8,12 +8,18 @@ datasource db {
 }
 
 model Tweet {
-  id          String   @id @default(cuid())
-  content     String
-  authorName  String
-  status      String   @default("pending") // pending | approved | rejected | posted | failed
-  flagReason  String?  // reason it was flagged as suspicious
-  postedAt    DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String    @id @default(cuid())
+  content         String
+  twitterUserId   String
+  twitterHandle   String
+  twitterName     String
+  twitterAvatar   String
+  status          String    @default("pending")
+  flagReason      String?
+  tweetId         String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([twitterUserId])
+  @@index([status])
 }
