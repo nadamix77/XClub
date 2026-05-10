@@ -1,26 +1,26 @@
 import NextAuth, { type NextAuthOptions } from "next-auth"
 import TwitterProvider from "next-auth/providers/twitter"
 
-const providers = []
-
-if (process.env.TWITTER_CLIENT_ID && process.env.TWITTER_CLIENT_SECRET) {
-  providers.push(
-    TwitterProvider({
-      clientId: process.env.TWITTER_CLIENT_ID,
-      clientSecret: process.env.TWITTER_CLIENT_SECRET,
-    })
-  )
-}
-
 export const authOptions: NextAuthOptions = {
-  providers,
+  providers: [
+    ...(process.env.TWITTER_CLIENT_ID && process.env.TWITTER_CLIENT_SECRET
+      ? [
+          TwitterProvider({
+            clientId: process.env.TWITTER_CLIENT_ID,
+            clientSecret: process.env.TWITTER_CLIENT_SECRET,
+          }),
+        ]
+      : []),
+  ],
   callbacks: {
     async jwt({ token, account, profile }) {
       if (account && profile) {
-        token.twitterUserId = profile.data?.id || profile.id
-        token.twitterHandle = profile.data?.username || (profile as Record<string, unknown>).screen_name as string || ""
-        token.twitterName = profile.data?.name || token.name || ""
-        token.twitterAvatar = profile.data?.profile_image_url || (profile as Record<string, unknown>).profile_image_url_https as string || token.picture || ""
+        const p = profile as Record<string, unknown>
+        const d = (p.data ?? {}) as Record<string, unknown>
+        token.twitterUserId = String(d.id ?? p.id ?? "")
+        token.twitterHandle = String(d.username ?? p.screen_name ?? "")
+        token.twitterName = String(d.name ?? token.name ?? "")
+        token.twitterAvatar = String(d.profile_image_url ?? p.profile_image_url_https ?? token.picture ?? "")
       }
       return token
     },

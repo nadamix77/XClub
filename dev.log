@@ -1,0 +1,8 @@
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://21.0.5.152:3000
+- Environments: .env
+✓ Ready in 344ms
+
+ GET / 200 in 343ms (next.js: 155ms, application-code: 188ms)
+ GET /api/auth/session 200 in 1350ms (next.js: 1320ms, application-code: 30ms)

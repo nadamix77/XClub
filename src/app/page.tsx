@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, type FormEvent } from "react"
+import { useState, useCallback, useEffect, type FormEvent } from "react"
 import { useSession, signIn, signOut, SessionProvider } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -165,27 +165,18 @@ function SubmitForm() {
     flagReasons?: string[]
     error?: string
   } | null>(null)
-  const [weekCount, setWeekCount] = useState(0)
-  const [loaded, setLoaded] = useState(false)
+  const [weekCount, setWeekCount] = useState<number | null>(null)
 
-  const remaining = WEEKLY_LIMIT - weekCount
+  const remaining = weekCount !== null ? WEEKLY_LIMIT - weekCount : WEEKLY_LIMIT
 
-  const fetchWeekCount = async () => {
-    try {
-      const res = await fetch("/api/tweets/count")
-      if (res.ok) {
-        const data = await res.json()
-        setWeekCount(data.count)
-      }
-    } catch {
-      // ignore
-    }
-  }
-
-  if (!loaded) {
-    setLoaded(true)
-    fetchWeekCount()
-  }
+  useEffect(() => {
+    fetch("/api/tweets/count")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) setWeekCount(data.count)
+      })
+      .catch(() => {})
+  }, [])
 
   const handleSubmit = async () => {
     if (!content.trim() || remaining <= 0) return
@@ -210,7 +201,7 @@ function SubmitForm() {
           flagReasons: data.flagReasons,
         })
         setContent("")
-        setWeekCount((c) => c + 1)
+        setWeekCount((c) => (c !== null ? c + 1 : 1))
       }
     } catch {
       setResult({
@@ -230,16 +221,16 @@ function SubmitForm() {
     <div className="space-y-6">
       {/* User info */}
       <div className="flex items-center gap-3">
-        {avatarUrl && (
+        {avatarUrl ? (
           <img
             src={avatarUrl}
             alt=""
             className="w-10 h-10 rounded-full"
           />
-        )}
+        ) : null}
         <div>
           <p className="font-medium">
-            @{(user as Record<string, unknown>)?.twitterHandle || user?.name}
+            @{((user as Record<string, unknown>)?.twitterHandle as string) || user?.name || ""}
           </p>
           <p className="text-sm text-muted-foreground">
             {remaining > 0
@@ -494,7 +485,7 @@ function AdminPanel({
               No history yet
             </p>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-2 max-h-96 overflow-y-auto">
               {history.map((tweet) => (
                 <div
                   key={tweet.id}

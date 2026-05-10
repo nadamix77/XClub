@@ -25,7 +25,7 @@ export async function POST(
       data: { status: "posted", tweetId },
     })
     return NextResponse.json({ tweet: updated })
-  } catch (err) {
+  } catch {
     const updated = await db.tweet.update({
       where: { id },
       data: { status: "failed" },
