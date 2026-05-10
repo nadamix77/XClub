@@ -113,47 +113,6 @@ function Main() {
 }
 
 function LoginPrompt() {
-  const [handle, setHandle] = useState("")
-
-  const hasTwitter = !!process.env.NEXT_PUBLIC_TWITTER_AUTH
-
-  if (!hasTwitter) {
-    return (
-      <Card className="text-center">
-        <CardContent className="pt-8 pb-8">
-          <Twitter className="w-12 h-12 text-sky-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold mb-2">Submit a Tweet</h2>
-          <p className="text-muted-foreground mb-6">
-            Enter your Twitter handle to submit tweets. Clean tweets post
-            instantly, suspicious ones need admin approval.
-          </p>
-          <form
-            onSubmit={(e: FormEvent) => {
-              e.preventDefault()
-              if (handle.trim()) signIn("demo", { handle: handle.trim(), redirect: false })
-            }}
-            className="flex gap-2 max-w-xs mx-auto"
-          >
-            <Input
-              placeholder="@yourhandle"
-              value={handle}
-              onChange={(e) => setHandle(e.target.value)}
-            />
-            <Button type="submit" disabled={!handle.trim()}>
-              Sign In
-            </Button>
-          </form>
-          <p className="text-xs text-muted-foreground mt-4">
-            Demo mode — configure Twitter OAuth for production
-          </p>
-          <p className="text-xs text-muted-foreground">
-            {WEEKLY_LIMIT} tweets per week per account
-          </p>
-        </CardContent>
-      </Card>
-    )
-  }
-
   return (
     <Card className="text-center">
       <CardContent className="pt-8 pb-8">
