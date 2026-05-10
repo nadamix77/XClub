@@ -113,7 +113,7 @@ cleanup() {
 
 trap cleanup EXIT INT TERM
 
-cd "$PROJECT_DIR/tweetgate"
+cd "$PROJECT_DIR"
 
 if ! command -v bun >/dev/null 2>&1; then
         echo "ERROR: bun is not installed or not in PATH"

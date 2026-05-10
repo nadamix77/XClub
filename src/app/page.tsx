@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback, type FormEvent } from "react"
+import { useState, useCallback, type FormEvent } from "react"
 import { useSession, signIn, signOut, SessionProvider } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -145,12 +145,9 @@ function SubmitForm() {
     error?: string
   } | null>(null)
   const [weekCount, setWeekCount] = useState(0)
+  const [loaded, setLoaded] = useState(false)
 
   const remaining = WEEKLY_LIMIT - weekCount
-
-  useEffect(() => {
-    fetchWeekCount()
-  }, [])
 
   const fetchWeekCount = async () => {
     try {
@@ -162,6 +159,11 @@ function SubmitForm() {
     } catch {
       // ignore
     }
+  }
+
+  if (!loaded) {
+    setLoaded(true)
+    fetchWeekCount()
   }
 
   const handleSubmit = async () => {
@@ -353,15 +355,15 @@ function AdminPanel({
     }
   }, [authed, password])
 
-  useEffect(() => {
-    if (authed) fetchPending()
-  }, [authed, fetchPending])
-
   const handleLogin = async () => {
     const res = await fetch("/api/tweets/pending", {
       headers: { "x-admin-password": password },
     })
-    if (res.ok) setAuthed(true)
+    if (res.ok) {
+      setAuthed(true)
+      const data = await res.json()
+      setPending(data.tweets)
+    }
   }
 
   const handleApprove = async (id: string) => {
