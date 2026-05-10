@@ -1,0 +1,27 @@
+// This is the production schema for Vercel Postgres
+// To deploy: cp prisma/schema.vercel.prisma prisma/schema.prisma && prisma migrate deploy
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tweet {
+  id              String    @id @default(cuid())
+  content         String
+  twitterUserId   String
+  twitterHandle   String
+  twitterName     String
+  twitterAvatar   String
+  status          String    @default("pending")
+  flagReason      String?
+  tweetId         String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([twitterUserId])
+  @@index([status])
+}
